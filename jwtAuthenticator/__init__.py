@@ -16,9 +16,6 @@ def create_app(test_config=None):
         SQLALCHEMY_TRACK_MODIFICATIONS = False
     )
 
-    # initialize bcrypt
-    bcrypt = Bcrypt(app)
-
     if test_config is None:
         #load the instance config if it exists when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -40,5 +37,8 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello_world():
         return "Hello, World"
+
+    from .views import auth_api 
+    app.register_blueprint(auth_api.api_bp)
 
     return app

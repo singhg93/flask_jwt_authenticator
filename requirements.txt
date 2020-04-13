@@ -3,3 +3,4 @@ flask-bcrypt
 flask-jwt-extended
 flask-migrate
 flask-sqlalchemy
+jsonschema
