@@ -5,7 +5,8 @@ from .models import db, User
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-#from config import Config
+from config import Config
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -18,7 +19,8 @@ def create_app(test_config=None):
 
     if test_config is None:
         #load the instance config if it exists when not testing
-        app.config.from_pyfile('config.py', silent=True)
+        #app.config.from_pyfile('config.py', silent=True)
+        app.config.from_object(Config)
     else:
         # load the config that is passed in
         app.config.from_mapping(test_config)
@@ -38,7 +40,15 @@ def create_app(test_config=None):
     def hello_world():
         return "Hello, World"
 
-    from .views import auth_api 
-    app.register_blueprint(auth_api.api_bp)
+    #from .views import auth_api 
+    #app.register_blueprint(auth_api.api_bp)
+
+    # pass the app context to the views
+    with app.app_context():
+        # import the registration and authentication api from views
+        from .views.auth_api import RegisterAPI, AuthenticateAPI
+        # add the url rules
+        app.add_url_rule('/api/register', view_func=RegisterAPI.as_view('register'))
+        app.add_url_rule('/api/authenticate', view_func=AuthenticateAPI.as_view('authenticate'))
 
     return app
