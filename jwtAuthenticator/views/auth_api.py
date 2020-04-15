@@ -1,7 +1,7 @@
 import functools
 import json
 from jwtAuthenticator.schemas.schema_user import validate_user
-from jwtAuthenticator import db
+from jwtAuthenticator.models import db
 from jwtAuthenticator.models import User
 from flask.views import MethodView
 from flask import current_app
@@ -12,19 +12,14 @@ from flask_jwt_extended import (
 )
 
 from flask import (
-    Blueprint, request, jsonify
+    request, jsonify
 )
 
-api_bp = Blueprint('api', __name__, url_prefix='/api')
 bcrypt = Bcrypt(current_app)
 jwt = JWTManager(current_app)
 
-#@api_bp.route("/test", methods=['GET'])
-#def test_route():
-#    passwordHash = bcrypt.generate_password_hash("hello")
-#    return passwordHash
 
-#@api_bp.route('/register', methods=['POST'])
+# registration endpoint
 class RegisterAPI(MethodView):
 
     def get(self):
@@ -61,7 +56,7 @@ class RegisterAPI(MethodView):
             return jsonify({'ok': False, 'message': 'Bad Request Parameters'}), 400
 
 
-#@api_bp.route('/authenticate', methods=['POST'])
+# authentication endpoint
 class AuthenticateAPI(MethodView):
 
     def get(self):
@@ -90,7 +85,7 @@ class AuthenticateAPI(MethodView):
                 # remove the password from the userdata
                 del user_data['password']
                 # create the access token
-                access_token = create_access_token(identity=user_data)
+                access_token = create_access_token(identity=user_data, fresh=True)
                 refresh_token = create_refresh_token(identity=user_data)
                 user_data['access_token'] = access_token
                 user_data['refresh_token'] = refresh_token
@@ -99,3 +94,37 @@ class AuthenticateAPI(MethodView):
             else:
                 # the user does not exist or the password is not valid, return invalid credentials
                 return jsonify({'ok': False, 'message': 'Invalid Credentials'}), 400
+
+# recreate accessToken
+class RefreshAPI(MethodView):
+    ''' view for refreshing jwt tokens '''
+
+    # get not allowed
+    def get(self):
+        return jsonify({'ok': False, 'message': 'forbidden'}), 403
+
+    # the refresh token is required to access this url
+    @jwt_refresh_token_required
+    def post(self):
+        ''' access token refresh endpoint '''
+        # get the current user
+        current_user = get_jwt_identity()
+        # create a new token
+        refreshed_token = {
+            'access_token': create_access_token(identity=current_user, fresh=False)
+        }
+        # return the access_token in refresh token
+        return jsonify(refreshed_token), 200
+
+#TODO: Remove below code only for testing
+class ProtectedTest(MethodView):
+
+    @jwt_required
+    def get(self):
+        current_user = get_jwt_identity()
+        return jsonify({"ok": True, 'message': 'You are doing great in get', 'Logged in as': current_user}), 200
+
+    @jwt_required
+    def post(self):
+        current_user = get_jwt_identity()
+        return jsonify({"ok": True, 'message': 'You are doing great in post', 'Logged in as': current_user}), 200

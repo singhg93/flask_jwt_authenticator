@@ -1,20 +1,21 @@
 import os
+import datetime
 
 from flask import Flask
-from .models import db, User
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from config import Config
 
-
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        SECRET_KEY="dev",
-        SQLALCHEMY_DATABASE_URI= 'sqlite:///' + os.path.join(app.instance_path, 'database.sqlite'),
-        SQLALCHEMY_TRACK_MODIFICATIONS = False
+        SECRET_KEY ="dev",
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.instance_path, 'database.sqlite'),
+        SQLALCHEMY_TRACK_MODIFICATIONS = False,
+        JWT_SECRET = "dev",
+        JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(days=1)
     )
 
     if test_config is None:
@@ -34,21 +35,18 @@ def create_app(test_config=None):
     from .models import db, User
     db.init_app(app)
 
+    # initialize the migration command
     migrate = Migrate(app, db)
-
-    @app.route('/hello')
-    def hello_world():
-        return "Hello, World"
-
-    #from .views import auth_api 
-    #app.register_blueprint(auth_api.api_bp)
 
     # pass the app context to the views
     with app.app_context():
         # import the registration and authentication api from views
-        from .views.auth_api import RegisterAPI, AuthenticateAPI
+        from .views.auth_api import RegisterAPI, AuthenticateAPI, RefreshAPI, ProtectedTest
         # add the url rules
-        app.add_url_rule('/api/register', view_func=RegisterAPI.as_view('register'))
-        app.add_url_rule('/api/authenticate', view_func=AuthenticateAPI.as_view('authenticate'))
+        app.add_url_rule('/auth/register', view_func=RegisterAPI.as_view('register'))
+        app.add_url_rule('/auth/login', view_func=AuthenticateAPI.as_view('login'))
+        app.add_url_rule('/auth/refresh', view_func=RefreshAPI.as_view('refresh'))
+        #TODO: remove this only for testing
+        app.add_url_rule('/auth/protected_test', view_func=ProtectedTest.as_view('test'))
 
     return app
