@@ -177,3 +177,10 @@ class ValidateFreshToken(MethodView):
     def get(self):
         current_user = get_jwt_identity()
         return jsonify({"ok": True, 'message': 'The token is valid', 'user': current_user}), 200
+
+#TODO: This is just a test
+class Home(MethodView):
+    ''' This is just to test frontend '''
+
+    def get(self):
+        return jsonify({"message": "This is a home"})
