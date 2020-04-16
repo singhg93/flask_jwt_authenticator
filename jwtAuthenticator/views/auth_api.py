@@ -183,4 +183,8 @@ class Home(MethodView):
     ''' This is just to test frontend '''
 
     def get(self):
-        return jsonify({"message": "This is a home"})
+        print("I am here")
+        return "This is a home in get"
+
+    def post(self):
+        return "this is a home in post"
