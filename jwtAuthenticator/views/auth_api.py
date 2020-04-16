@@ -8,7 +8,7 @@ from flask import current_app
 from flask_bcrypt import Bcrypt
 
 from flask_jwt_extended import (
-    JWTManager, create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity
+    JWTManager, create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, fresh_jwt_required
 )
 
 from flask import (
@@ -78,8 +78,6 @@ class AuthenticateAPI(MethodView):
             user = User.query.filter_by(username=user_data['username']).first()
 
             # if the user with the given username exists and the password is valid
-            print(user.password)
-            print(user_data['password'])
             if user and bcrypt.check_password_hash(user.password, user_data['password']):
 
                 # remove the password from the userdata
@@ -116,15 +114,66 @@ class RefreshAPI(MethodView):
         # return the access_token in refresh token
         return jsonify(refreshed_token), 200
 
-#TODO: Remove below code only for testing
-class ProtectedTest(MethodView):
-
-    @jwt_required
+# fresh login
+class FreshLogin(MethodView):
+    ''' view to create fresh access tokens '''
+    
     def get(self):
-        current_user = get_jwt_identity()
-        return jsonify({"ok": True, 'message': 'You are doing great in get', 'Logged in as': current_user}), 200
+        return jsonify({'ok': False, 'message': 'forbidden'}), 403
 
     @jwt_required
     def post(self):
+        ''' user authentication endpoint '''
+
+        # validate the request data
+        data = validate_user(request.get_json())
+
+        # if validataion was successful
+        if data['ok']:
+
+            # get the user data from the validated data
+            user_data = data['user_data']
+
+            # get teh user from the data from database if it exists
+            user = User.query.filter_by(username=user_data['username']).first()
+
+            # if the user with the given username exists and the password is valid
+            if user and bcrypt.check_password_hash(user.password, user_data['password']):
+
+                # remove the password from the userdata
+                del user_data['password']
+
+                # create the access token
+                access_token = create_access_token(identity=user_data, fresh=True)
+                user_data['access_token'] = access_token
+                return jsonify({'ok': True, 'data': user_data}), 200
+
+            else:
+                # the user does not exist or the password is not valid, return invalid credentials
+                return jsonify({'ok': False, 'message': 'Invalid Credentials'}), 400
+
+
+class ValidateToken(MethodView):
+    ''' token validation endpoint '''
+
+    # validate the token
+    @jwt_required
+    def get(self):
         current_user = get_jwt_identity()
-        return jsonify({"ok": True, 'message': 'You are doing great in post', 'Logged in as': current_user}), 200
+        return jsonify({"ok": True, 'message': 'The token is valid', 'user': current_user}), 200
+
+    # not implemented
+    @jwt_required
+    def post(self):
+        #current_user = get_jwt_identity()
+        #return jsonify({"ok": True, 'message': 'The token is valid', 'user': current_user}), 200
+        pass
+
+class ValidateFreshToken(MethodView):
+    ''' fresh token validation '''
+
+    # validate the token and verify it is fresh
+    @fresh_jwt_required
+    def get(self):
+        current_user = get_jwt_identity()
+        return jsonify({"ok": True, 'message': 'The token is valid', 'user': current_user}), 200
