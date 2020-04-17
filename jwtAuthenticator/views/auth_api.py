@@ -8,15 +8,15 @@ from flask import current_app
 from flask_bcrypt import Bcrypt
 
 from flask_jwt_extended import (
-    JWTManager, create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, fresh_jwt_required
+    JWTManager, create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, fresh_jwt_required, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
 )
 
 from flask import (
     request, jsonify
 )
 
-bcrypt = Bcrypt(current_app)
-jwt = JWTManager(current_app)
+bcrypt = Bcrypt()
+jwt = JWTManager()
 
 
 # registration endpoint
@@ -51,8 +51,11 @@ class RegisterAPI(MethodView):
 
         # validation did not succeed
         else:
+
+            if data['error'] == 'validation':
+                return jsonify({'ok': False, 'message': 'Bad input values'}), 400
+
             # send the response with a message indicating a bad request
-            print(data['message'])
             return jsonify({'ok': False, 'message': 'Bad Request Parameters'}), 400
 
 
@@ -85,13 +88,25 @@ class AuthenticateAPI(MethodView):
                 # create the access token
                 access_token = create_access_token(identity=user_data, fresh=True)
                 refresh_token = create_refresh_token(identity=user_data)
-                user_data['access_token'] = access_token
-                user_data['refresh_token'] = refresh_token
-                return jsonify({'ok': True, 'data': user_data}), 200
+                #user_data['access_token'] = access_token
+                #user_data['refresh_token'] = refresh_token
+                user_data['login'] = True
+                resp = jsonify(user_data)
+                set_access_cookies(resp, access_token)
+                set_refresh_cookies(resp, refresh_token)
+                return resp, 200
 
             else:
                 # the user does not exist or the password is not valid, return invalid credentials
                 return jsonify({'ok': False, 'message': 'Invalid Credentials'}), 400
+        else:
+
+            if data['error'] == 'validation':
+                return jsonify({'ok': False, 'message': 'Invalid Credentials'}), 400
+
+            # the user does not exist or the password is not valid, return invalid credentials
+            return jsonify({'ok': False, 'message': 'Bad Request'}), 400
+
 
 # recreate accessToken
 class RefreshAPI(MethodView):
@@ -108,11 +123,14 @@ class RefreshAPI(MethodView):
         # get the current user
         current_user = get_jwt_identity()
         # create a new token
-        refreshed_token = {
-            'access_token': create_access_token(identity=current_user, fresh=False)
-        }
+        access_token = create_access_token(identity=current_user, fresh=False)
+
+        # response
+        resp = jsonify({'refresh': True})
+        set_access_cookies(resp, access_token)
+
         # return the access_token in refresh token
-        return jsonify(refreshed_token), 200
+        return resp, 200
 
 # fresh login
 class FreshLogin(MethodView):
@@ -143,10 +161,17 @@ class FreshLogin(MethodView):
                 # remove the password from the userdata
                 del user_data['password']
 
+                #user_data['access_token'] = access_token
+                user_data['fresh_login'] = True
+
                 # create the access token
                 access_token = create_access_token(identity=user_data, fresh=True)
-                user_data['access_token'] = access_token
-                return jsonify({'ok': True, 'data': user_data}), 200
+
+                # create a response
+                resp = jsonify(user_data)
+                set_access_cookies(resp, access_token)
+
+                return resp, 200
 
             else:
                 # the user does not exist or the password is not valid, return invalid credentials
@@ -160,14 +185,15 @@ class ValidateToken(MethodView):
     @jwt_required
     def get(self):
         current_user = get_jwt_identity()
-        return jsonify({"ok": True, 'message': 'The token is valid', 'user': current_user}), 200
+        return jsonify({"ok": True, 'is_valid': True, 'user': current_user}), 200
 
     # not implemented
     @jwt_required
     def post(self):
         #current_user = get_jwt_identity()
         #return jsonify({"ok": True, 'message': 'The token is valid', 'user': current_user}), 200
-        pass
+        current_user = get_jwt_identity()
+        return jsonify({"ok": True, 'is_valid': True, 'user': current_user}), 200
 
 class ValidateFreshToken(MethodView):
     ''' fresh token validation '''
@@ -176,14 +202,33 @@ class ValidateFreshToken(MethodView):
     @fresh_jwt_required
     def get(self):
         current_user = get_jwt_identity()
-        return jsonify({"ok": True, 'message': 'The token is valid', 'user': current_user}), 200
+        return jsonify({"ok": True, 'is_valid': True, 'user': current_user}), 200
+
+    @fresh_jwt_required
+    def post(self):
+        current_user = get_jwt_identity()
+        return jsonify({"ok": True, 'is_valid': True, 'user': current_user}), 200
+
+
+class LogoutAPI(MethodView):
+    ''' logout token validation '''
+
+    # remove the tokens from cookies
+    def get(self):
+        return jsonify({'ok': False, 'message': 'forbidden'}), 403
+
+    def post(self):
+        resp = jsonify({'logout': True})
+        # remove the cookies from the response
+        unset_jwt_cookies(resp)
+        return resp, 200
+
 
 #TODO: This is just a test
 class Home(MethodView):
     ''' This is just to test frontend '''
 
     def get(self):
-        print("I am here")
         return "This is a home in get"
 
     def post(self):
