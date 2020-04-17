@@ -39,18 +39,20 @@ def create_app(test_config=None):
     migrate = Migrate(app, db)
 
     # pass the app context to the views
-    with app.app_context():
-        # import the registration and authentication api from views
-        from .views.auth_api import(
-            RegisterAPI, AuthenticateAPI, RefreshAPI, FreshLogin, ValidateToken, ValidateFreshToken, Home
-        )
-        # add the url rules
-        app.add_url_rule('/auth/register', view_func=RegisterAPI.as_view('register'))
-        app.add_url_rule('/auth/login', view_func=AuthenticateAPI.as_view('login'))
-        app.add_url_rule('/auth/refresh', view_func=RefreshAPI.as_view('refresh'))
-        app.add_url_rule('/auth/fresh_login', view_func=FreshLogin.as_view('fresh_login'))
-        app.add_url_rule('/auth/validate_token', view_func=ValidateToken.as_view('validate_token'))
-        app.add_url_rule('/auth/validate_fresh_token', view_func=ValidateFreshToken.as_view('validate_fresh_token'))
-        app.add_url_rule('/auth/home', view_func=Home.as_view('home'))
+    #with app.app_context():
+    # import the registration and authentication api from views
+    from .views.auth_api import(
+        jwt, bcrypt, RegisterAPI, AuthenticateAPI, RefreshAPI, FreshLogin, ValidateToken, ValidateFreshToken, Home
+    )
+    jwt.init_app(app)
+    bcrypt.init_app(app)
+    # add the url rules
+    app.add_url_rule('/auth/register', view_func=RegisterAPI.as_view('register'))
+    app.add_url_rule('/auth/login', view_func=AuthenticateAPI.as_view('login'))
+    app.add_url_rule('/auth/refresh', view_func=RefreshAPI.as_view('refresh'))
+    app.add_url_rule('/auth/fresh_login', view_func=FreshLogin.as_view('fresh_login'))
+    app.add_url_rule('/auth/validate_token', view_func=ValidateToken.as_view('validate_token'))
+    app.add_url_rule('/auth/validate_fresh_token', view_func=ValidateFreshToken.as_view('validate_fresh_token'))
+    app.add_url_rule('/auth/home', view_func=Home.as_view('home'))
 
     return app
