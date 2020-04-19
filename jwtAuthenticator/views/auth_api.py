@@ -69,7 +69,6 @@ class AuthenticateAPI(MethodView):
         ''' user authentication endpoint '''
 
         # validate the request data
-        print(request.get_json())
         data = validate_user(request.get_json())
 
         # if validataion was successful
@@ -92,7 +91,6 @@ class AuthenticateAPI(MethodView):
                 #user_data['access_token'] = access_token
                 #user_data['refresh_token'] = refresh_token
                 user_data['login'] = True
-                print(get_csrf_token(access_token))
                 resp = jsonify(user_data)
                 set_access_cookies(resp, access_token)
                 set_refresh_cookies(resp, refresh_token)
