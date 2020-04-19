@@ -8,7 +8,7 @@ from flask_bcrypt import Bcrypt
 from flask import current_app
 
 from flask_jwt_extended import (
-    JWTManager, create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, fresh_jwt_required, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
+    JWTManager, create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, fresh_jwt_required, set_access_cookies, set_refresh_cookies, unset_jwt_cookies, get_csrf_token
 )
 
 from flask import (
