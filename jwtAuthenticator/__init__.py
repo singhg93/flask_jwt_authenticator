@@ -24,13 +24,10 @@ def create_app(config_name='default'):
         JWT_COOKIE_SECURE = False
     )
 
-    if test_config is None:
-        #load the instance config if it exists when not testing
-        #app.config.from_pyfile('config.py', silent=True)
-        app.config.from_object(Config)
-    else:
-        # load the config that is passed in
-        app.config.from_mapping(test_config)
+    #load the instance config if it exists when not testing
+    #app.config.from_pyfile('config.py', silent=True)
+    app.config.from_object(config[config_name])
+
     #app.config.from_mapping(
     #    SECRET_KEY ="dev",
     #    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.instance_path, 'database.sqlite'),
@@ -71,7 +68,6 @@ def create_app(config_name='default'):
     app.add_url_rule('/auth/fresh_login', view_func=FreshLogin.as_view('fresh_login'))
     app.add_url_rule('/auth/validate_token', view_func=ValidateToken.as_view('validate_token'))
     app.add_url_rule('/auth/validate_fresh_token', view_func=ValidateFreshToken.as_view('validate_fresh_token'))
-    app.add_url_rule('/auth/logout', view_func=LogoutAPI.as_view('logout'))
     app.add_url_rule('/auth/home', view_func=Home.as_view('home'))
 
     # register the test module to add the "flask test" click command
