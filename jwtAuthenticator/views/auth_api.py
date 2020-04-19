@@ -8,7 +8,7 @@ from flask import current_app
 from flask_bcrypt import Bcrypt
 
 from flask_jwt_extended import (
-    JWTManager, create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, fresh_jwt_required, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
+    JWTManager, create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, fresh_jwt_required, set_access_cookies, set_refresh_cookies, unset_jwt_cookies, get_csrf_token
 )
 
 from flask import (
@@ -69,6 +69,7 @@ class AuthenticateAPI(MethodView):
         ''' user authentication endpoint '''
 
         # validate the request data
+        print(request.get_json())
         data = validate_user(request.get_json())
 
         # if validataion was successful
@@ -91,6 +92,7 @@ class AuthenticateAPI(MethodView):
                 #user_data['access_token'] = access_token
                 #user_data['refresh_token'] = refresh_token
                 user_data['login'] = True
+                print(get_csrf_token(access_token))
                 resp = jsonify(user_data)
                 set_access_cookies(resp, access_token)
                 set_refresh_cookies(resp, refresh_token)

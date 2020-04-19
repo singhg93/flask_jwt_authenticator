@@ -5,9 +5,9 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-from config import Config
+from config import config
 
-def create_app(test_config=None):
+def create_app(config_name='default'):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
@@ -18,13 +18,9 @@ def create_app(test_config=None):
         JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(days=1)
     )
 
-    if test_config is None:
-        #load the instance config if it exists when not testing
-        #app.config.from_pyfile('config.py', silent=True)
-        app.config.from_object(Config)
-    else:
-        # load the config that is passed in
-        app.config.from_mapping(test_config)
+    #load the instance config if it exists when not testing
+    #app.config.from_pyfile('config.py', silent=True)
+    app.config.from_object(config[config_name])
 
     # ensure the instance folder exists
     try:
