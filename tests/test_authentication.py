@@ -23,7 +23,7 @@ class BasicTest(unittest.TestCase):
     def test_app_is_testing(self):
         self.assertTrue(current_app.config['TESTING'])
 
-class BasicHomeTest(BasicTest):
+class BasicHomeTest(unittest.TestCase):
     def get_api_headers(self):
         return {
             'Content-Type': 'application/json'
