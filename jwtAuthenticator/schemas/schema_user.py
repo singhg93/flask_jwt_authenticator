@@ -1,7 +1,6 @@
 # import the modules required for validating the user using json schema
 from jsonschema import validate
-from jsonschema.exceptions import ValidationError
-from jsonschema.exceptions import SchemaError
+from jsonschema.exceptions import ValidationError, SchemaError
 
 # define the user schema
 user_schema = {

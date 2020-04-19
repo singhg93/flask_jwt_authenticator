@@ -15,7 +15,12 @@ def create_app(test_config=None):
         SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.instance_path, 'database.sqlite'),
         SQLALCHEMY_TRACK_MODIFICATIONS = False,
         JWT_SECRET = "dev",
-        JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(days=1)
+        JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(days=1),
+        JWT_TOKEN_LOCATION = ['cookies'],
+        JWT_ACCESS_COOKIE_PATH = '/auth',
+        JWT_REFRESH_COOKIE_PATH = '/auth/refresh',
+        JWT_COOKIE_CSRF_PROTECT = True,
+        JWT_COOKIE_SECURE = False
     )
 
     if test_config is None:
@@ -42,17 +47,19 @@ def create_app(test_config=None):
     #with app.app_context():
     # import the registration and authentication api from views
     from .views.auth_api import(
-        jwt, bcrypt, RegisterAPI, AuthenticateAPI, RefreshAPI, FreshLogin, ValidateToken, ValidateFreshToken, Home
+        jwt, bcrypt, RegisterAPI, AuthenticateAPI, RefreshAPI, FreshLogin, ValidateToken, ValidateFreshToken, Home, LogoutAPI
     )
     jwt.init_app(app)
     bcrypt.init_app(app)
     # add the url rules
     app.add_url_rule('/auth/register', view_func=RegisterAPI.as_view('register'))
     app.add_url_rule('/auth/login', view_func=AuthenticateAPI.as_view('login'))
+    app.add_url_rule('/auth/logout', view_func=LogoutAPI.as_view('logout'))
     app.add_url_rule('/auth/refresh', view_func=RefreshAPI.as_view('refresh'))
     app.add_url_rule('/auth/fresh_login', view_func=FreshLogin.as_view('fresh_login'))
     app.add_url_rule('/auth/validate_token', view_func=ValidateToken.as_view('validate_token'))
     app.add_url_rule('/auth/validate_fresh_token', view_func=ValidateFreshToken.as_view('validate_fresh_token'))
     app.add_url_rule('/auth/home', view_func=Home.as_view('home'))
+
 
     return app

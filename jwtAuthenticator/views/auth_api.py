@@ -4,8 +4,8 @@ from jwtAuthenticator.schemas.schema_user import validate_user
 from jwtAuthenticator.models import db
 from jwtAuthenticator.models import User
 from flask.views import MethodView
-from flask import current_app
 from flask_bcrypt import Bcrypt
+from flask import current_app
 
 from flask_jwt_extended import (
     JWTManager, create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, fresh_jwt_required, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
