@@ -3,7 +3,6 @@ import datetime
 import click
 
 from flask import Flask
-from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from config import config
@@ -46,8 +45,9 @@ def create_app(config_name='default'):
     except OSError:
         pass
 
-    from .models import db, User
+    from .models import db, User, bcrypt
     db.init_app(app)
+    bcrypt.init_app(app)
 
     # initialize the migration command
     migrate = Migrate(app, db)
@@ -56,10 +56,9 @@ def create_app(config_name='default'):
     #with app.app_context():
     # import the registration and authentication api from views
     from .views.auth_api import(
-        jwt, bcrypt, RegisterAPI, AuthenticateAPI, RefreshAPI, FreshLogin, ValidateToken, ValidateFreshToken, Home, LogoutAPI
+        jwt, RegisterAPI, AuthenticateAPI, RefreshAPI, FreshLogin, ValidateToken, ValidateFreshToken, Home, LogoutAPI
     )
     jwt.init_app(app)
-    bcrypt.init_app(app)
     # add the url rules
     app.add_url_rule('/auth/register', view_func=RegisterAPI.as_view('register'))
     app.add_url_rule('/auth/login', view_func=AuthenticateAPI.as_view('login'))
@@ -71,8 +70,8 @@ def create_app(config_name='default'):
     app.add_url_rule('/auth/home', view_func=Home.as_view('home'))
 
     # register the test module to add the "flask test" click command
-    from tests import test_init_app
-    test_init_app(app)
+    import tests
+    tests.test_init_app(app)
 
     return app
 

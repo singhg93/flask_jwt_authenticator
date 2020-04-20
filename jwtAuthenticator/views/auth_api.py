@@ -4,7 +4,6 @@ from jwtAuthenticator.schemas.schema_user import validate_user
 from jwtAuthenticator.models import db
 from jwtAuthenticator.models import User
 from flask.views import MethodView
-from flask_bcrypt import Bcrypt
 from flask import current_app
 
 from flask_jwt_extended import (
@@ -15,7 +14,6 @@ from flask import (
     request, jsonify
 )
 
-bcrypt = Bcrypt()
 jwt = JWTManager()
 
 
@@ -33,8 +31,7 @@ class RegisterAPI(MethodView):
         if data['ok']:
             # get the user data
             user_data = data['user_data']
-            # create the hash of the password
-            user_data['password'] = bcrypt.generate_password_hash(user_data['password']).decode('utf-8')
+
             # create a new user and save it in the database
             newUser = User(username=user_data['username'], password=user_data['password'])
 
@@ -81,7 +78,7 @@ class AuthenticateAPI(MethodView):
             user = User.query.filter_by(username=user_data['username']).first()
 
             # if the user with the given username exists and the password is valid
-            if user and bcrypt.check_password_hash(user.password, user_data['password']):
+            if user and user.verify_password(user_data['password']):
 
                 # remove the password from the userdata
                 del user_data['password']
@@ -156,7 +153,7 @@ class FreshLogin(MethodView):
             user = User.query.filter_by(username=user_data['username']).first()
 
             # if the user with the given username exists and the password is valid
-            if user and bcrypt.check_password_hash(user.password, user_data['password']):
+            if user and user.verify_password(user_data['password']):
 
                 # remove the password from the userdata
                 del user_data['password']
