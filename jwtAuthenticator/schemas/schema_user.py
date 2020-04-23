@@ -8,6 +8,8 @@ user_schema = {
     "properties": {
         "username": {
             "type": "string",
+            "minLength": 4,
+            "pattern": "^[a-zA-Z0-9_@!]+$"
         },
         "password": {
             "type": "string",
@@ -26,7 +28,7 @@ def validate_user(data):
         validate(data, user_schema)
     except ValidationError as validate_error:
         # if there was a validation error, return the error
-        return {'ok': False, 'message': validate_error, 'error': 'validation'}
+        return {'ok': False, 'message': validate_error.absolute_path.pop(), 'error': 'validation'}
     except SchemaError as schema_error:
         # if there was a schema error, return the error
         return {'ok': False, 'message': schema_error, 'error': 'schema'}
