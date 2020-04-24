@@ -4,7 +4,6 @@ from jwtAuthenticator.schemas.schema_user import validate_user
 from jwtAuthenticator.models import db
 from jwtAuthenticator.models import User
 from flask.views import MethodView
-from flask import current_app
 
 from flask_jwt_extended import (
     JWTManager,
@@ -59,18 +58,18 @@ class RegisterAPI(MethodView):
         else:
 
             if data['error'] == 'validation':
-                message = ""
-                if data['message'] == 'username':
-                    message = "Username must be at least 4 characters "
-                    message += "and can only contain _ @ ! and no spaces"
-                elif data['message'] == 'password':
-                    message = "Password must be atleast 8 characters in length "
-                    message += "and must contain a capital letter, a small letter, "
-                    message += "a number and a special character"
-                return jsonify({'ok': False, 'message': message}), 400
+                #message = ""
+                #if data['message'] == 'username':
+                #    message = "Username must be at least 4 characters "
+                #    message += "and can only contain _ @ ! and no spaces"
+                #elif data['message'] == 'password':
+                #    message = "Password must be atleast 8 characters in length "
+                #    message += "and must contain a capital letter, a small letter, "
+                #    message += "a number and a special character"
+                return jsonify({'ok': False, 'message': "Invalid Credentials"}), 400
 
             # send the response with a message indicating a bad request
-            return jsonify({'ok': False, 'message': data['message']}), 400
+            return jsonify({'ok': False, 'message': "Bad Credentials"}), 400
 
 
 # authentication endpoint
