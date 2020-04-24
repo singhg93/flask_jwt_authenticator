@@ -25,7 +25,6 @@ def create_app(config_name='default'):
 
     #load the instance config if it exists when not testing
     #app.config.from_pyfile('config.py', silent=True)
-    app.config.from_object(config[config_name])
 
     #app.config.from_mapping(
     #    SECRET_KEY ="dev",
