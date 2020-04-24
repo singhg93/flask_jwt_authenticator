@@ -28,7 +28,7 @@ def validate_user(data):
         validate(data, user_schema)
     except ValidationError as validate_error:
         # if there was a validation error, return the error
-        return {'ok': False, 'message': validate_error.absolute_path.pop(), 'error': 'validation'}
+        return {'ok': False, 'message': validate_error, 'error': 'validation'}
     except SchemaError as schema_error:
         # if there was a schema error, return the error
         return {'ok': False, 'message': schema_error, 'error': 'schema'}
