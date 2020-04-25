@@ -69,6 +69,14 @@ $ export SECRET_KEY=dev # change this to a very long random string
 $ export JWT_SECRET_KEY=jwt-dev # change this to a very long random string
 ```
 
+Initialize the database and create all the tables
+
+```
+$ flask db init
+$ flask db migrate -m "initial migration"
+$ flask db upgrade
+```
+
 Run the application
 
 ```
