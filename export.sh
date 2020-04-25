@@ -1,0 +1,2 @@
+export FLASK_APP=jwtAuthenticator
+export FLASK_ENV=development
