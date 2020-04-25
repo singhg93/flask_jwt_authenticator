@@ -1,6 +1,6 @@
-flask
+Flask
 flask-bcrypt
 flask-jwt-extended
-flask-migrate
+Flask-Migrate
 flask-sqlalchemy
 jsonschema
