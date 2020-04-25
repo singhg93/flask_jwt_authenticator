@@ -110,8 +110,9 @@ Response:
 }
 ```
 
-The JWT tokens are sent in http only cookies so, if we examine the headers.txt file,
-we can see the tokens that were generated and sent to the user.
+The JWT tokens are sent in http only cookies, and the cookies are saved in
+cookies.txt by the curl request.
+Dump the contents of the headers file to see all the cookies.
 
 ```
 $ cat headers.txt
@@ -138,11 +139,9 @@ Date: Sat, 25 Apr 2020 21:00:57 GMT
 
 Validating the token
 
-To validate the token, we need to send the csrf as a header in 
-'X-CSRF-TOKEN'. Also, if we use a web browser, the JWT tokens are included 
-in the cookies automatically but when using `curl`, we need to include those as
-cookies in the header as well. Since we stored the cookies in cookies.txt, we can use that
-file to send cookies to the server
+To validate the token, jwt and csrf is sent in the request headers as cookies.
+To include cookies in the header, the cookies.txt file can be used which was
+created when the user logged in.
 
 ```
 $ curl -b cookies.txt http://localhost:5000/auth/validate_token
