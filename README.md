@@ -57,6 +57,9 @@ Set a secret key, you the create a random key by using the following command
 
 ```
 $ python -c 'import os; print(os.urandom(16))'
+
+# sample output
+b'\x87\x86\xa6\x98?\xb0\xcd"\x9e\xa7\x93)\tv)['
 ```
 
 Set the secret keys for flask and jwt
