@@ -5,8 +5,8 @@ A simple authentication api using flask and jwt web tokens
 
 # Dependencies
 
-Python 3.5 or higher
-Virtualenv
+- Python 3.5 or higher
+- Virtualenv
 
 You can install python from here 
 [Python](https://www.python.org/downloads/)
@@ -59,11 +59,11 @@ Set a secret key, you the create a random key by using the following command
 $ python -c 'import os; print(os.urandom(16))'
 ```
 
+Set the secret keys for flask and jwt
+
 ```
-$ python -c 'import os; print(os.urandom(16))' | export SECRET_KEY=
-```
-```
-$ python -c 'import os; print(os.urandom(16))' | export JWT_SECRET_KEY=
+$ export SECRET_KEY=dev # change this to a very long random string
+$ export JWT_SECRET_KEY=jwt-dev # change this to a very long random string
 ```
 
 Run the application
@@ -80,7 +80,11 @@ Registering a user
 $ curl -H "Content-Type: application/json" -X POST\
   -d '{"username": "testUsername", "password": "testPassword123@"}' \
   http://localhost:5000/auth/register
+```
 
+Response: 
+
+```
 {
     "message": "User Created",
     "ok": true
@@ -95,7 +99,11 @@ $ curl -H "Content-Type: application/json" -X POST\
   -c cookies.txt
   -D headers.txt
   http://localhost:5000/auth/login
+```
 
+Response: 
+
+```
 {
     "login": "true",
     "username": testUsername
@@ -138,7 +146,11 @@ file to send cookies to the server
 
 ```
 $ curl -b cookies.txt http://localhost:5000/auth/validate_token
+```
 
+Response:
+
+```
 {
   "is_valid": true,
   "ok": true,
