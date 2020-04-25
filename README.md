@@ -17,6 +17,8 @@ Virtualenv can be installed from
 
 # Installing and running
 
+Run the following commands from a terminal.
+
 Clone the repository
 ```
 $ git clone https://github.com/singhg93/flask_jwt_authenticator.git
@@ -84,6 +86,8 @@ $ flask run
 ```
 
 # Making requests
+
+These commands are run from a second terminal and the flask server must be running.
 
 Registering a user
 
