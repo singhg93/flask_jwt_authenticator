@@ -111,8 +111,8 @@ Authenticate
 ```
 $ curl -H "Content-Type: application/json" -X POST\
   -d '{"username": "testUsername", "password": "testPassword123@"}' \
-  -c cookies.txt
-  -D headers.txt
+  -c cookies.txt \
+  -D headers.txt \
   http://localhost:5000/auth/login
 ```
 
