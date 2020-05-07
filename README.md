@@ -94,7 +94,7 @@ Registering a user
 ```
 $ curl -H "Content-Type: application/json" -X POST\
   -d '{"username": "testUsername", "password": "testPassword123@"}' \
-  http://localhost:5000/auth/register
+  http://localhost:5000/register
 ```
 
 Response: 
@@ -113,7 +113,7 @@ $ curl -H "Content-Type: application/json" -X POST\
   -d '{"username": "testUsername", "password": "testPassword123@"}' \
   -c cookies.txt \
   -D headers.txt \
-  http://localhost:5000/auth/login
+  http://localhost:5000/login
 ```
 
 Response: 
@@ -142,7 +142,7 @@ Set-Cookie: access_token_cookie=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE
 
 Set-Cookie: csrf_access_token=574c6840-f268-4b4e-942a-06ffc8561c94; Path=/
 
-Set-Cookie: refresh_token_cookie=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1ODc4NDg0NTcsIm5iZiI6MTU4Nzg0ODQ1NywianRpIjoiYWY1MjcwZjQtZDg1Mi00NGEyLThiNmUtM2RmZjc2ZTQ4MzRlIiwiZXhwIjoxNTkwNDQwNDU3LCJpZGVudGl0eSI6eyJ1c2VybmFtZSI6InRlc3RVc2VybmFtZSJ9LCJ0eXBlIjoicmVmcmVzaCIsImNzcmYiOiIyOGM0NzJhZC1mMzI5LTQ1OGQtYWQwMS1iNjhmMDM5MTNlNDIifQ.QHJYM4WICuZgfuskzvshBqutcvIAJKh-trFawJaLh3o; HttpOnly; Path=/auth/refresh
+Set-Cookie: refresh_token_cookie=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1ODc4NDg0NTcsIm5iZiI6MTU4Nzg0ODQ1NywianRpIjoiYWY1MjcwZjQtZDg1Mi00NGEyLThiNmUtM2RmZjc2ZTQ4MzRlIiwiZXhwIjoxNTkwNDQwNDU3LCJpZGVudGl0eSI6eyJ1c2VybmFtZSI6InRlc3RVc2VybmFtZSJ9LCJ0eXBlIjoicmVmcmVzaCIsImNzcmYiOiIyOGM0NzJhZC1mMzI5LTQ1OGQtYWQwMS1iNjhmMDM5MTNlNDIifQ.QHJYM4WICuZgfuskzvshBqutcvIAJKh-trFawJaLh3o; HttpOnly; Path=/refresh
 
 Set-Cookie: csrf_refresh_token=28c472ad-f329-458d-ad01-b68f03913e42; Path=/
 
@@ -159,7 +159,7 @@ To include cookies in the header, the cookies.txt file can be used which was
 created when the user logged in.
 
 ```
-$ curl -b cookies.txt http://localhost:5000/auth/validate_token
+$ curl -b cookies.txt http://localhost:5000/validate_token
 ```
 
 Response:

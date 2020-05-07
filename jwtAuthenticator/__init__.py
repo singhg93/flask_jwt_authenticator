@@ -17,8 +17,8 @@ def create_app(config_name='default'):
         JWT_SECRET = "dev",
         JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(days=1),
         JWT_TOKEN_LOCATION = ['cookies'],
-        JWT_ACCESS_COOKIE_PATH = '/auth',
-        JWT_REFRESH_COOKIE_PATH = '/auth/refresh',
+        JWT_ACCESS_COOKIE_PATH = '/',
+        JWT_REFRESH_COOKIE_PATH = '/refresh',
         JWT_COOKIE_CSRF_PROTECT = True,
         JWT_COOKIE_SECURE = False
     )
@@ -59,14 +59,14 @@ def create_app(config_name='default'):
     )
     jwt.init_app(app)
     # add the url rules
-    app.add_url_rule('/auth/register', view_func=RegisterAPI.as_view('register'))
-    app.add_url_rule('/auth/login', view_func=AuthenticateAPI.as_view('login'))
-    app.add_url_rule('/auth/logout', view_func=LogoutAPI.as_view('logout'))
-    app.add_url_rule('/auth/refresh', view_func=RefreshAPI.as_view('refresh'))
-    app.add_url_rule('/auth/fresh_login', view_func=FreshLogin.as_view('fresh_login'))
-    app.add_url_rule('/auth/validate_token', view_func=ValidateToken.as_view('validate_token'))
-    app.add_url_rule('/auth/validate_fresh_token', view_func=ValidateFreshToken.as_view('validate_fresh_token'))
-    app.add_url_rule('/auth/home', view_func=Home.as_view('home'))
+    app.add_url_rule('/register', view_func=RegisterAPI.as_view('register'))
+    app.add_url_rule('/login', view_func=AuthenticateAPI.as_view('login'))
+    app.add_url_rule('/logout', view_func=LogoutAPI.as_view('logout'))
+    app.add_url_rule('/refresh', view_func=RefreshAPI.as_view('refresh'))
+    app.add_url_rule('/fresh_login', view_func=FreshLogin.as_view('fresh_login'))
+    app.add_url_rule('/validate_token', view_func=ValidateToken.as_view('validate_token'))
+    app.add_url_rule('/validate_fresh_token', view_func=ValidateFreshToken.as_view('validate_fresh_token'))
+    app.add_url_rule('/home', view_func=Home.as_view('home'))
 
     # register the test module to add the "flask test" click command
     import tests

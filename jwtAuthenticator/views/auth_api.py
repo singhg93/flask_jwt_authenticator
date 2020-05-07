@@ -46,7 +46,7 @@ class RegisterAPI(MethodView):
             # if the User with the given username already exists
             if (User.query.filter_by(username=user_data['username']).first()):
                 # send the username already exists in the json response
-                return jsonify({'ok': False, 'message': 'Username already exists'}), 400
+                return jsonify({'ok': False, 'message': 'duplicate_username'}), 400
 
             # add the user in the database
             db.session.add(newUser)
@@ -241,7 +241,9 @@ class Home(MethodView):
     ''' This is just to test frontend '''
 
     def get(self):
-        return "This is a home in get"
+        resp = jsonify({'message': "this is home in get"})
+        return resp, 200
 
     def post(self):
-        return "this is a home in post"
+        resp = jsonify({'message': "this is home in post"})
+        return resp, 200
