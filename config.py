@@ -33,6 +33,8 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     #SECRET_KEY = b'\xb5\xf52e\xc7`nXo\xfd\xed\x1f\x99@T\xf0'
+    SECRET_KEY = "test"
+    JWT_SECRET = "jwt-test"
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URI') or 'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
 

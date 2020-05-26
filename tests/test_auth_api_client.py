@@ -34,18 +34,18 @@ class AuthClientTestCase(unittest.TestCase):
         '''
         Test the home url 
         '''
-        response = self.client.get('/auth/home')
+        response = self.client.get('/home')
         # The response status code should be 200, i.e. the request was successful
         self.assertEqual(response.status_code, 200)
         # The response should contain the following text
-        self.assertTrue('This is a home' in response.get_data(as_text=True))
+        self.assertTrue('this is home' in response.get_data(as_text=True))
 
     def test_user_registration(self):
         '''
         Test user registration endpoint
         '''
         # register a new user
-        response = self.client.post('/auth/register',
+        response = self.client.post('/register',
             # set the content type header to json
             content_type = 'application/json',
             # send the data for creating a new user
@@ -63,7 +63,7 @@ class AuthClientTestCase(unittest.TestCase):
         '''
 
         # register a new user with invalid password specification
-        response = self.client.post('/auth/register',
+        response = self.client.post('/register',
             # set the content type header to json
             content_type = 'application/json',
             # give the data to be sent with the request
@@ -80,7 +80,7 @@ class AuthClientTestCase(unittest.TestCase):
         Test bad username registration
         '''
         # register a new user with incorrect username specification
-        response = self.client.post('/auth/register',
+        response = self.client.post('/register',
             # set the content type header
             content_type = 'application/json',
             # set the data to be sent with the request
@@ -98,7 +98,7 @@ class AuthClientTestCase(unittest.TestCase):
         Test no password given registration
         '''
         # register a new user with incorrect password specification
-        response = self.client.post('/auth/register',
+        response = self.client.post('/register',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -113,7 +113,7 @@ class AuthClientTestCase(unittest.TestCase):
         Test user login
         '''
         # register a new user and test if he is authenticated
-        response_register = self.client.post('/auth/register',
+        response_register = self.client.post('/register',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -123,7 +123,7 @@ class AuthClientTestCase(unittest.TestCase):
         self.assertEqual(response_register.status_code, 200)
 
         # send the request to login endpoint with user credentials
-        response_login = self.client.post('/auth/login',
+        response_login = self.client.post('/login',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -137,7 +137,7 @@ class AuthClientTestCase(unittest.TestCase):
         Test bad credentials login attempt
         '''
         # register a new user and test if he is authenticated
-        response_register = self.client.post('/auth/register',
+        response_register = self.client.post('/register',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -147,7 +147,7 @@ class AuthClientTestCase(unittest.TestCase):
         self.assertEqual(response_register.status_code, 200)
 
         # test user login endpoint with bad user credentials
-        response_login = self.client.post('/auth/login',
+        response_login = self.client.post('/login',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -162,7 +162,7 @@ class AuthClientTestCase(unittest.TestCase):
         Test wrong username correct password login attmpt
         '''
         # register a new user and test if he is authenticated
-        response_register = self.client.post('/auth/register',
+        response_register = self.client.post('/register',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -172,7 +172,7 @@ class AuthClientTestCase(unittest.TestCase):
         self.assertEqual(response_register.status_code, 200)
 
         # test the login endpoint with wrong username
-        response_login = self.client.post('/auth/login',
+        response_login = self.client.post('/login',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'wrongUsername',
@@ -186,7 +186,7 @@ class AuthClientTestCase(unittest.TestCase):
         Test refresh access_token endpoint
         '''
         # create a new user
-        register_response = self.client.post('/auth/register',
+        register_response = self.client.post('/register',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -195,7 +195,7 @@ class AuthClientTestCase(unittest.TestCase):
         # assert that the user is created successfully
         self.assertEqual(register_response.status_code, 200)
         # Login the user and save the response to a variable
-        login_response = self.client.post('/auth/login',
+        login_response = self.client.post('/login',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -208,7 +208,7 @@ class AuthClientTestCase(unittest.TestCase):
         # get the csrf token from the cookies
         csrf_refresh_token = self.get_access_token_cookie(login_response, "csrf_refresh_token")
         # test the refresh endpoint using refresh_token cookies and csrf_token cookies
-        refresh_response = self.client.post('/auth/refresh',
+        refresh_response = self.client.post('/refresh',
             content_type = 'application/json',
             headers = {
                 'Set-Cookie': refresh_token_cookie,
@@ -223,7 +223,7 @@ class AuthClientTestCase(unittest.TestCase):
         Test fresh access_token login
         '''
         # register the user
-        register_response = self.client.post('/auth/register', 
+        register_response = self.client.post('/register', 
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -232,7 +232,7 @@ class AuthClientTestCase(unittest.TestCase):
         # test that the user is created successfully
         self.assertEqual(register_response.status_code, 200)
         # login the user using the fresh login endpoint
-        login_response = self.client.post('/auth/fresh_login', 
+        login_response = self.client.post('/fresh_login', 
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -247,7 +247,7 @@ class AuthClientTestCase(unittest.TestCase):
         '''
 
         # register the user
-        register_response = self.client.post('/auth/register',
+        register_response = self.client.post('/register',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -257,7 +257,7 @@ class AuthClientTestCase(unittest.TestCase):
         self.assertEqual(register_response.status_code, 200)
 
         # log the user in
-        login_response = self.client.post('/auth/login',
+        login_response = self.client.post('/login',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -270,7 +270,7 @@ class AuthClientTestCase(unittest.TestCase):
         access_token_cookie = self.get_access_token_cookie(login_response, "access_token_cookie")
 
         # send a request to token validation endpoint with access token and csrf token
-        refresh_response = self.client.post('/auth/validate_token',
+        refresh_response = self.client.post('/validate_token',
             content_type = 'application/json',
             headers = {
                 'Set-Cookie': access_token_cookie,
@@ -285,7 +285,7 @@ class AuthClientTestCase(unittest.TestCase):
         Test validate fresh token endpoint
         '''
         # register a new user
-        register_response = self.client.post('/auth/register',
+        register_response = self.client.post('/register',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -295,7 +295,7 @@ class AuthClientTestCase(unittest.TestCase):
         self.assertEqual(register_response.status_code, 200)
 
         # log the user in
-        login_response = self.client.post('/auth/login',
+        login_response = self.client.post('/login',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -307,7 +307,7 @@ class AuthClientTestCase(unittest.TestCase):
         csrf_access_token = self.get_access_token_cookie(login_response, "csrf_access_token")
         access_token_cookie = self.get_access_token_cookie(login_response, "access_token_cookie")
         # get the resonse from the fresh token validation endpoint
-        fresh_validation_response = self.client.post('/auth/validate_fresh_token',
+        fresh_validation_response = self.client.post('/validate_fresh_token',
             content_type = 'application/json',
             headers = {
                 'Set-Cookie': access_token_cookie,
@@ -322,7 +322,7 @@ class AuthClientTestCase(unittest.TestCase):
         Logout endpoin test
         '''
         # register a new user
-        register_response = self.client.post('/auth/register',
+        register_response = self.client.post('/register',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -332,7 +332,7 @@ class AuthClientTestCase(unittest.TestCase):
         self.assertEqual(register_response.status_code, 200)
 
         # log the user in
-        login_response = self.client.post('/auth/login',
+        login_response = self.client.post('/login',
             content_type = 'application/json',
             data = json.dumps({
                 'username': 'test',
@@ -344,9 +344,17 @@ class AuthClientTestCase(unittest.TestCase):
         csrf_access_token = self.get_access_token_cookie(login_response, "csrf_access_token")
         access_token_cookie = self.get_access_token_cookie(login_response, "access_token_cookie")
         # send a request to logout endpoint
-        logout_response = self.client.post('/auth/logout')
+        logout_response = self.client.post('/logout')
         # test that the request was successful
         self.assertEqual(logout_response.status_code, 200)
+
+    def test_get_all_users(self):
+        '''
+        /users endpoint test
+        '''
+        pass
+
+
 
     # funcion to get the cookies from a response object
     def get_access_token_cookie(self, response, cookie_name):
