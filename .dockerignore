@@ -1,0 +1,6 @@
+# ignore the venv folder
+venv/
+instance/
+migrations/
+__pycache__/*
+**/__pycache__/*
