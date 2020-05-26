@@ -6,7 +6,6 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from config import config
-from .json_encoder import JsonEncoder
 
 def create_app(config_name='default'):
     # create and configure the app
@@ -23,9 +22,6 @@ def create_app(config_name='default'):
         JWT_COOKIE_CSRF_PROTECT = True,
         JWT_COOKIE_SECURE = False
     )
-
-    # change the default json encoder
-    app.json_encoder = JsonEncoder
 
     #load the instance config if it exists when not testing
     #app.config.from_pyfile('config.py', silent=True)
