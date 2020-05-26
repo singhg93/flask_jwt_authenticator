@@ -70,8 +70,9 @@ def create_app(config_name='default'):
     app.add_url_rule('/home', view_func=Home.as_view('home'))
 
     # register the test module to add the "flask test" click command
-    import tests
-    tests.test_init_app(app)
+    # uncomment the following two lines when testing
+    # import tests
+    # tests.test_init_app(app)
 
     return app
 

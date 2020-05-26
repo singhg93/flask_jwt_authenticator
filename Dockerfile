@@ -37,6 +37,11 @@ ENV FLASK_ENV=development
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
+# create database migrations
+RUN flask db init
+RUN flask db migrate -m "initial migrations"
+RUN flask db upgrade
+
 
 # let port 80 be accessible to the ouside world
 EXPOSE 80
