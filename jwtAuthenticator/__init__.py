@@ -6,6 +6,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from config import config
+from .json_encoder import JsonEncoder
 
 def create_app(config_name='default'):
     # create and configure the app
@@ -22,6 +23,9 @@ def create_app(config_name='default'):
         JWT_COOKIE_CSRF_PROTECT = True,
         JWT_COOKIE_SECURE = False
     )
+
+    # change the default json encoder
+    app.json_encoder = JsonEncoder
 
     #load the instance config if it exists when not testing
     #app.config.from_pyfile('config.py', silent=True)
@@ -55,7 +59,7 @@ def create_app(config_name='default'):
     #with app.app_context():
     # import the registration and authentication api from views
     from .views.auth_api import(
-        jwt, RegisterAPI, AuthenticateAPI, RefreshAPI, FreshLogin, ValidateToken, ValidateFreshToken, Home, LogoutAPI
+        jwt, RegisterAPI, AuthenticateAPI, RefreshAPI, FreshLogin, ValidateToken, ValidateFreshToken, Home, LogoutAPI, GetUsers
     )
     jwt.init_app(app)
     # add the url rules
@@ -66,6 +70,7 @@ def create_app(config_name='default'):
     app.add_url_rule('/fresh_login', view_func=FreshLogin.as_view('fresh_login'))
     app.add_url_rule('/validate_token', view_func=ValidateToken.as_view('validate_token'))
     app.add_url_rule('/validate_fresh_token', view_func=ValidateFreshToken.as_view('validate_fresh_token'))
+    app.add_url_rule('/users', view_func=GetUsers.as_view('users'))
     app.add_url_rule('/home', view_func=Home.as_view('home'))
 
     # register the test module to add the "flask test" click command

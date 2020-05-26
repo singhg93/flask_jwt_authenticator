@@ -352,7 +352,12 @@ class AuthClientTestCase(unittest.TestCase):
         '''
         /users endpoint test
         '''
-        pass
+        self.register_users()
+        users_response = self.client.get('/users')
+
+        self.assertEqual(users_response.status_code, 200)
+        # self.assertEqual(users_response.get_data(as_text=False))
+        print(users_response.get_data(as_text=False))
 
 
 
@@ -367,3 +372,30 @@ class AuthClientTestCase(unittest.TestCase):
             # if the value starts with the required cookie name then return the value
             if value.startswith(cookie_name):
                 return value
+
+    def register_users(self):
+
+        register_response = self.client.post('/register',
+            content_type = 'application/json',
+            data = json.dumps({
+                'username': 'test',
+                'password': 'Password123@'
+            }))
+        register_response = self.client.post('/register',
+            content_type = 'application/json',
+            data = json.dumps({
+                'username': 'test2',
+                'password': 'Password123@'
+            }))
+        register_response = self.client.post('/register',
+            content_type = 'application/json',
+            data = json.dumps({
+                'username': 'test3',
+                'password': 'Password123@'
+            }))
+        register_response = self.client.post('/register',
+            content_type = 'application/json',
+            data = json.dumps({
+                'username': 'test4',
+                'password': 'Password123@'
+            }))

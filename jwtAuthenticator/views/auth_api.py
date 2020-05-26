@@ -235,6 +235,13 @@ class LogoutAPI(MethodView):
         unset_jwt_cookies(resp)
         return resp, 200
 
+class GetUsers(MethodView):
+    
+    def get(self):
+        all_users = User.query.order_by(User.username).all()
+        #return jsonify({'ok': True, 'data': all_users}), 200
+        json_encodeable_users = [a_user.as_dict() for a_user in all_users]
+        return jsonify({'ok': True, 'data': json_encodeable_users}, 200)
 
 #TODO: This is just a test
 class Home(MethodView):
