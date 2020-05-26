@@ -1,6 +1,18 @@
 # ignore the venv folder
 venv/
+
+# ignore the instance folder becuase it is created itself
 instance/
+
+# ignore migrations, it will be autocreated
 migrations/
+
+# ignore pycache folders
 __pycache__/*
 **/__pycache__/*
+
+# ignore the git files and folder
+.git*
+
+# ignore the tests
+tests/*
